@@ -75,6 +75,15 @@ class LLMSyncPipeline(CommonModelPipeline):
                     )
 
                 return _openai_predict(query, wrapper_doubao)
+            elif self.model_id in ("mimo-v2.5-pro", "mimo-v2.5"):
+                def wrapper_xiaomi(messages):
+                    return self._remote_model.chat.completions.create(
+                        model=self.model_id,
+                        messages=messages,
+                        stream=False
+                    )
+
+                return _openai_predict(query, wrapper_xiaomi)
             else:
                 raise NotImplementedError(f"Unsupported model {self.model_id}")
         else:

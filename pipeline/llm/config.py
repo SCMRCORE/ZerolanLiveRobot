@@ -13,6 +13,8 @@ class LLMModelIdEnum(BaseEnum):
     DeepSeekAPI: str = "deepseek-chat"
     KimiAPI: str = "moonshot-v1-8k"
     DoubaoAPI: str = "doubao-seed-1-6-flash-250715"
+    XiaomiMimoPro: str = "mimo-v2.5-pro"
+    XiaomiMimo: str = "mimo-v2.5"
 
     ChatGLM3_6B: str = "THUDM/chatglm3-6b"
     GLM4: str = "THUDM/GLM-4"
