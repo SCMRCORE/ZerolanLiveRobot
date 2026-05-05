@@ -9,3 +9,8 @@ resources/config.yaml
 /.temp
 config.yaml
 /services/playground/proto/*_pb2*.py
+# 自己加的
+ZerolanLiveRobot\TODO.md
+ZerolanLiveRobot\INTEGRATION_REPORT.md
+ZerolanLiveRobot\start_all.ps1
+ZerolanLiveRobot\start_all.bat
