@@ -121,14 +121,16 @@ class ZerolanLiveRobotContext:
         if _config.service.playground.enable:
             self.model_manager = ModelManager()
             self.bot_id = _config.service.playground.bot_id
-            self.live2d_model = _config.service.playground.model_dir
+            self.live2d_model = _config.character.live2d.model_dir
             self.custom_agent = CustomAgent(config=_config.pipeline.llm)
-            self.playground = PlaygroundBridge(config=_config.service.playground)
+            playground_config = _config.service.playground.model_copy()
+            playground_config.model_dir = _config.character.live2d.model_dir
+            self.playground = PlaygroundBridge(config=playground_config)
         if _config.service.qqbot.enable:
             from services.qqbot.napcat import QQBotService
 
             self.qq: QQBotService = QQBotService(_config.service.qqbot)
-        self.mic = SmartMicrophone(vad_mode=_config.system.microphone_vad_mode)
+        self.mic = SmartMicrophone(enable_vad=True, vad_mode=_config.system.microphone_vad_mode)
 
         # Headless system can not load `pynput` and `pygame`
         self.keyboard = None
@@ -142,4 +144,11 @@ class ZerolanLiveRobotContext:
         self.tool_agent = ToolAgent(_config.pipeline.llm)
         if _config.service.live2d_viewer.enable:
             from services.live2d.live2d_viewer import Live2DViewer
-            self.live2d_viewer = Live2DViewer(_config.service.live2d_viewer)
+            live2d_config = _config.service.live2d_viewer.model_copy()
+            live2d_config.model3_json_file = _config.character.live2d.model3_json_file
+            live2d_config.auto_lip_sync = _config.character.live2d.auto_lip_sync
+            live2d_config.auto_blink = _config.character.live2d.auto_blink
+            live2d_config.auto_breath = _config.character.live2d.auto_breath
+            live2d_config.win_height = _config.character.live2d.win_height
+            live2d_config.win_width = _config.character.live2d.win_width
+            self.live2d_viewer = Live2DViewer(live2d_config)

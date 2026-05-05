@@ -10,17 +10,25 @@ from pipeline.base.base_sync import AbstractPipelineConfig
 #######
 
 class TTSModelIdEnum(BaseEnum):
-    GPT_SoVITS = "AkagawaTsurunaki/GPT-SoVITS"  # Forked repo
+    GPT_SoVITS = "AkagawaTsurunaki/GPT-SoVITS"
     BaiduTTS = "BaiduTTS"
+    XiaomiMimoV2TTS = "mimo-v2-tts"
+    XiaomiMimoV25TTS = "mimo-v2.5-tts"
+    XiaomiMimoV25TTSVoiceClone = "mimo-v2.5-tts-voiceclone"
+    XiaomiMimoV25TTSVoiceDesign = "mimo-v2.5-tts-voicedesign"
 
 
-# Config for BaiduTTS and should
 class BaiduTTSConfig(BaseModel):
     api_key: str = Field(default="", description="The API key for Baidu TTS service.")
     secret_key: str = Field(default="", description="The secret key for Baidu TTS service.")
 
 
-# Config for ZerolanCore
+class XiaomiTTSConfig(BaseModel):
+    api_key: str = Field(default="", description="The API key for Xiaomi TTS service.")
+    base_url: str = Field(default="https://token-plan-cn.xiaomimimo.com/v1", description="The base URL for Xiaomi TTS API.")
+    voice: str = Field(default="default", description="The voice ID for TTS synthesis.")
+
+
 class TTSPipelineConfig(AbstractPipelineConfig):
     model_id: TTSModelIdEnum = Field(default=TTSModelIdEnum.GPT_SoVITS,
                                      description=f"The ID of the model used for text-to-speech. \n"
@@ -33,3 +41,6 @@ class TTSPipelineConfig(AbstractPipelineConfig):
                                              description=f"Baidu TTS config. \n"
                                                          f"Only edit it when you set `model_id` to `{TTSModelIdEnum.BaiduTTS.value}`.\n"
                                                          f"For more details please see the [documents](https://cloud.baidu.com/doc/SPEECH/s/mlbxh7xie).")
+    xiaomi_tts_config: XiaomiTTSConfig = Field(default=XiaomiTTSConfig(),
+                                               description=f"Xiaomi TTS config. \n"
+                                                           f"Only edit it when you set `model_id` to Xiaomi TTS models.")

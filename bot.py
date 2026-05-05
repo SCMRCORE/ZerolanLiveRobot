@@ -521,11 +521,10 @@ class ZerolanLiveRobot(BaseBot):
                                 prefix='tts')
         if self.live2d_viewer:
             self.live2d_viewer.sync_lip(audio_path)
-        if self.playground:
-            if self.playground.is_connected:
-                self.playground.play_speech(bot_id=self.bot_id, audio_path=audio_path,
-                                            transcript=text, bot_name=self.bot_name)
-                logger.debug("Remote speaker enqueue speech data")
+        if self.playground and self.playground.is_connected:
+            self.playground.play_speech(bot_id=self.bot_id, audio_path=audio_path,
+                                        transcript=text, bot_name=self.bot_name)
+            logger.debug("Remote speaker enqueue speech data")
         else:
             # `playsound(audio_path, block=True)` will block the thread, use `enqueue_sound(audio_path)` instead
             self.speaker.enqueue_sound(audio_path)

@@ -7,6 +7,7 @@ from zerolan.data.pipeline.asr import ASRQuery, ASRPrediction, ASRStreamQuery
 
 from pipeline.asr.baidu_asr import BaiduASRPipeline
 from pipeline.asr.whisper_asr import WhisperASRPipeline
+from pipeline.asr.xiaomi_asr import XiaomiASRPipeline
 from pipeline.asr.config import ASRPipelineConfig, ASRModelIdEnum
 from pipeline.base.base_sync import CommonModelPipeline
 
@@ -32,6 +33,14 @@ class ASRSyncPipeline(CommonModelPipeline):
             )
             self.predict = whisper.predict
             self.stream_predict = whisper.stream_predict
+        elif config.model_id == ASRModelIdEnum.XiaomiMimoASR and config.xiaomi_asr_config is not None:
+            xiaomi = XiaomiASRPipeline(
+                api_key=config.xiaomi_asr_config.api_key,
+                base_url=config.xiaomi_asr_config.base_url,
+                model=config.xiaomi_asr_config.model
+            )
+            self.predict = xiaomi.predict
+            self.stream_predict = xiaomi.stream_predict
 
     @typechecked
     def predict(self, query: ASRQuery) -> ASRPrediction | None:

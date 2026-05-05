@@ -7,6 +7,7 @@ from typeguard import typechecked
 
 from common.generator.config_gen import ConfigFileGenerator
 from config import ZerolanLiveRobotConfig
+from character.preset_manager import get_preset_manager
 
 # Should not import these global value!
 _project_dir: Path | None = None
@@ -81,6 +82,15 @@ def get_config(path: Path | None = None) -> ZerolanLiveRobotConfig:
         with open(path, mode="r", encoding="utf-8") as f:
             cfg_dict = yaml.safe_load(f)
             _config = ZerolanLiveRobotConfig.model_validate(cfg_dict)
+            
+            preset_name = cfg_dict.get("character", {}).get("preset")
+            if preset_name:
+                logger.info(f"Loading character preset: {preset_name}")
+                preset_manager = get_preset_manager(
+                    str(get_project_dir() / "resources" / "characters")
+                )
+                _config.character = preset_manager.apply_preset(preset_name, _config.character)
+            
             return _config
     else:
         generate_config_file(path)

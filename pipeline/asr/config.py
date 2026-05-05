@@ -18,6 +18,7 @@ class ASRModelIdEnum(BaseEnum):
     KotobaWhisper = 'kotoba-tech/kotoba-whisper-v2.0'
     BaiduASR = "BaiduASR"
     WhisperASR = "WhisperASR"
+    XiaomiMimoASR = "mimo-v2.5"
 
 
 class BaiduASRConfig(BaseModel):
@@ -34,6 +35,12 @@ class WhisperASRConfig(BaseModel):
     prompt: str | None = Field(default=None, description="Optional text to guide the model's style or continue a previous audio segment.")
     temperature: float = Field(default=0.0, description="Sampling temperature between 0 and 1. Higher values make output more random.")
     response_format: str = Field(default="json", description="The format of the transcript output. Options: json, text, srt, verbose_json, vtt")
+
+
+class XiaomiASRConfig(BaseModel):
+    api_key: str = Field(default="", description="The API key for Xiaomi ASR service.")
+    base_url: str = Field(default="https://api.xiaomimimo.com/v1", description="The base URL for Xiaomi API.")
+    model: str = Field(default="mimo-v2.5", description="The model ID for Xiaomi audio understanding.")
 
 
 class ASRPipelineConfig(AbstractPipelineConfig):
@@ -53,3 +60,6 @@ class ASRPipelineConfig(AbstractPipelineConfig):
     whisper_asr_config: WhisperASRConfig = Field(default=WhisperASRConfig(), description="Whisper ASR config. "
                                                                                         f"Only edit it when you set `model_id` to `{ASRModelIdEnum.WhisperASR.value}`.\n"
                                                                                         f"For more details please see the [documents](https://zhizengzeng.com/docs/audio).")
+    xiaomi_asr_config: XiaomiASRConfig = Field(default=XiaomiASRConfig(), description="Xiaomi ASR config. "
+                                                                                     f"Only edit it when you set `model_id` to `{ASRModelIdEnum.XiaomiMimoASR.value}`.\n"
+                                                                                     f"Uses Xiaomi's audio understanding capability for transcription.")

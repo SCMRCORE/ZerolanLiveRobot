@@ -1,4 +1,5 @@
 from openai import OpenAI
+from loguru import logger
 from requests import Response
 from typeguard import typechecked
 from zerolan.data.pipeline.llm import LLMQuery, LLMPrediction, RoleEnum, Conversation
@@ -23,8 +24,10 @@ def _to_openai_format(query: LLMQuery):
 
 def _openai_predict(query: LLMQuery, wrapper):
     messages = _to_openai_format(query)
+    logger.debug(f"[LLM] Sending request with {len(messages)} messages")
     completion = wrapper(messages)
     resp = completion.choices[0].message.content
+    logger.info(f"[LLM] Response: {resp[:100]}..." if len(resp) > 100 else f"[LLM] Response: {resp}")
     query.history.append(Conversation(role=RoleEnum.user, content=query.text))
     query.history.append(Conversation(role=RoleEnum.assistant, content=resp))
     return LLMPrediction(response=resp, history=query.history)
@@ -47,6 +50,7 @@ class LLMSyncPipeline(CommonModelPipeline):
     @typechecked
     def predict(self, query: LLMQuery) -> LLMPrediction | None:
         assert isinstance(query, LLMQuery)
+        logger.info(f"[LLM] User input: {query.text}")
         if self._is_openai_format:
             if self.model_id == "moonshot-v1-8k":
                 def wrapper_kimi(messages):

@@ -101,7 +101,7 @@ class TTSPromptManager:
                     assert os.path.exists(audio_path), f"File not found: {audio_path}"
                     prompt.audio_path = os.path.abspath(audio_path)
 
-                if prompt.sentiment == "Default":
+                if prompt.sentiment in ("Default", "默认"):
                     self.default_tts_prompt = prompt
                 self.tts_prompts.append(prompt)
                 self.sentiments.append(prompt.sentiment)

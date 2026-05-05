@@ -25,7 +25,7 @@ class ChatConfig(BaseModel):
     filter: FilterConfig = Field(FilterConfig(),
                                  description="Configuration for filtering in chat")
     system_prompt: str = Field(
-        default="你现在是叫做“<YOUR_BOT_NAME>”的一名猫娘，你的开发者是赤川鹤鸣。我会为你提供语音识别、图像识别、图像理解、语音合成和一系列的 AI 集成功能。你现在正在直播平台上与观众友好交流，请把自己当成一名真正的人类，与观众友好交流。你的话不要太长，控制在50字左右。",
+        default="你现在是叫做\"<YOUR_BOT_NAME>\"的一名猫娘，你的开发者是赤川鹤鸣。我会为你提供语音识别、图像识别、图像理解、语音合成和一系列的 AI 集成功能。你现在正在直播平台上与观众友好交流，请把自己当成一名真正的人类，与观众友好交流。你的话不要太长，控制在50字左右。",
         description="System prompt used to guide the chatbot's behavior. \n"
                     "Usually set the character's setting, background, behavior, personality, etc.")
     injected_history: List[str] = Field(default=[
@@ -59,10 +59,37 @@ class SpeechConfig(BaseModel):
                                description="If you set `is_remote` to `True`, you must config this!")
 
 
+class Live2DConfig(BaseModel):
+    model_dir: str = Field(
+        default="./resources/static/models/live2d/<YOUR_LIVE2D_DIR>",
+        description="The path to the model directory."
+    )
+    model3_json_file: str = Field(
+        default="./resources/static/models/live2d/<YOUR_LIVE2D_DIR>/<YOUR_MODEL>.model3.json",
+        description="Path of `xxx.model3.json`"
+    )
+    auto_lip_sync: bool = Field(default=True, description="Auto lip sync.")
+    auto_blink: bool = Field(default=True, description="Auto eye blink.")
+    auto_breath: bool = Field(default=True, description="Auto breath.")
+    win_height: int = Field(default=960, description="Window height.")
+    win_width: int = Field(default=960, description="Window width.")
+
+
 class CharacterConfig(BaseModel):
     bot_name: str = Field("<YOUR_BOT_NAME>",
                           description="Name of the bot character.")
+    live2d: Live2DConfig = Field(
+        default=Live2DConfig(),
+        description="Configuration for Live2D settings."
+    )
     chat: ChatConfig = Field(ChatConfig(),
                              description="Configuration for chat-related settings.")
     speech: SpeechConfig = Field(SpeechConfig(),
                                  description="Configuration for speech-related settings.")
+
+
+class CharacterPreset(BaseModel):
+    bot_name: str = Field(..., description="Name of the bot character.")
+    live2d: Live2DConfig = Field(..., description="Configuration for Live2D settings.")
+    chat: ChatConfig = Field(..., description="Configuration for chat-related settings.")
+    speech: SpeechConfig = Field(..., description="Configuration for speech-related settings.")
