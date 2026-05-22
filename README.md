@@ -91,9 +91,55 @@ python main.py
 
 ### 运行项目
 
-**配置文件修改完毕后**，可以再一次运行 `python main.py` 以启动程序，若没有报错则程序已经成功启动。
+#### 一键启动（推荐）
 
-默认情况下，按下 `f8` 可以开启/关闭麦克风，也就是说，你需要在说话前按下一次 `f8`，在说话完毕后再按下一次 `f8`，此时麦克风的数据会被传输到 ASR 服务中，
+项目提供了便捷的一键启动脚本，自动同时启动 ZerolanCore ASR 服务和 ZerolanLiveRobot：
+
+```powershell
+# PowerShell
+cd d:\project-server\TraeProject\ZerolanLiveRobot
+.\start_all.ps1
+```
+
+或双击 `start_all.bat`（CMD）。
+
+**效果**：自动打开两个独立窗口：
+- **ZerolanCore ASR**（端口 11001）— 本地语音识别服务
+- **ZerolanLiveRobot** — 主程序
+
+#### 手动启动
+
+如果需要分别控制两个服务，可以手动启动：
+
+**终端 1 — ZerolanCore ASR**：
+
+```powershell
+cd d:\project-server\TraeProject\zerolan-core\asr\paraformer
+.\.venv\Scripts\Activate.ps1
+cd ..\..
+python starter.py asr
+```
+
+**终端 2 — ZerolanLiveRobot**：
+
+```powershell
+conda activate ZerolanLiveRobot
+cd d:\project-server\TraeProject\ZerolanLiveRobot
+python main.py
+```
+
+#### 环境说明
+
+| 项目 | 环境类型 | 环境名/激活方式 |
+|------|---------|----------------|
+| ZerolanCore | uv/venv | `asr/paraformer/.venv` |
+| ZerolanLiveRobot | conda | `ZerolanLiveRobot` |
+
+> **注意**：若在新窗口中 `conda activate` 不生效，请使用 `conda run -n ZerolanLiveRobot python main.py`。
+
+#### 交互方式
+
+默认情况下，按下 `f8` 可以开启/关闭麦克风。你需要在说话前按下一次 `f8`，在说话完毕后再按下一次 `f8`，此时麦克风的数据会被传输到 ASR 服务中，
 一旦 ASR 返回了语音识别结果，就会紧接着将你的输入提供给 LLM 服务，LLM 服务后接收到你的输入后，会将推理内容响应回来，再交由 TTS 服务用以语音合成，此时你应该可以听到机器人的回复。
 
 若在此期间出现任何报错或问题，都可以通过新建 Issue 获取帮助，届时还恳请您提供完整的日志和复现流程。

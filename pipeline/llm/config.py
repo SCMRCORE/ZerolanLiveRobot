@@ -12,9 +12,11 @@ from pipeline.base.base_sync import AbstractPipelineConfig
 class LLMModelIdEnum(BaseEnum):
     DeepSeekAPI: str = "deepseek-chat"
     KimiAPI: str = "moonshot-v1-8k"
+    KimiCodeAPI: str = "kimi-for-coding"
     DoubaoAPI: str = "doubao-seed-1-6-flash-250715"
     XiaomiMimoV25Pro: str = "mimo-v2.5-pro"
     XiaomiMimoV25: str = "mimo-v2.5"
+    GLM46VFlash: str = "glm-4.6v-flash"
 
     ChatGLM3_6B: str = "THUDM/chatglm3-6b"
     GLM4: str = "THUDM/GLM-4"

@@ -41,12 +41,14 @@ def _check_license(path: Path) -> bool:
 
 
 @typechecked
-def _find_license_recursively(path: Path, depth=0, max_depth=20) -> Path:
+def _find_license_recursively(path: Path, depth=0, max_depth=5) -> Path:
     if depth > max_depth:
-        raise RecursionError()
-    for file in path.rglob("LICENSE"):
+        raise RecursionError("Could not find valid LICENSE file within max depth.")
+    # Only search current directory, not deep subdirectories like node_modules
+    for file in path.glob("LICENSE"):
         logger.info(f"Found candidate path: {file}")
-        return Path(file)
+        if _check_license(file):
+            return Path(file)
     depth += 1
     return _find_license_recursively(path.parent, depth)
 
@@ -55,12 +57,22 @@ def _find_license_recursively(path: Path, depth=0, max_depth=20) -> Path:
 def get_project_dir() -> Path:
     global _project_dir
     if _project_dir is None:
+        # Try to find project root by looking for LICENSE in current and parent dirs
         cwd = Path(os.getcwd())
-        license_path = _find_license_recursively(cwd)
-        if _check_license(license_path):
-            _project_dir = Path(license_path.parent)
+        # First check if we're already in the project dir
+        if (cwd / "LICENSE").exists() and _check_license(cwd / "LICENSE"):
+            _project_dir = cwd
         else:
-            exit()
+            # Check common subdirectories
+            for subdir in cwd.iterdir():
+                if subdir.is_dir() and (subdir / "LICENSE").exists():
+                    if _check_license(subdir / "LICENSE"):
+                        _project_dir = subdir
+                        break
+            else:
+                # Fallback: search recursively with limited depth
+                license_path = _find_license_recursively(cwd)
+                _project_dir = Path(license_path.parent)
     return _project_dir
 
 

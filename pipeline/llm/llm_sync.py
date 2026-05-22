@@ -88,6 +88,24 @@ class LLMSyncPipeline(CommonModelPipeline):
                     )
 
                 return _openai_predict(query, wrapper_xiaomi)
+            elif self.model_id == "kimi-for-coding":
+                def wrapper_kimi_coding(messages):
+                    return self._remote_model.chat.completions.create(
+                        model=self.model_id,
+                        messages=messages,
+                        stream=False
+                    )
+
+                return _openai_predict(query, wrapper_kimi_coding)
+            elif self.model_id == "glm-4.6v-flash":
+                def wrapper_glm(messages):
+                    return self._remote_model.chat.completions.create(
+                        model=self.model_id,
+                        messages=messages,
+                        stream=False
+                    )
+
+                return _openai_predict(query, wrapper_glm)
             else:
                 raise NotImplementedError(f"Unsupported model {self.model_id}")
         else:
